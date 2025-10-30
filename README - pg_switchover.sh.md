@@ -1,16 +1,16 @@
 README — pg_switchover.sh
 =========================
-**⚠️ Disclaimer⚠️**
+## **⚠️ Disclaimer⚠️**
 
 This script and README files are provided as examples only. They are intended to illustrate possible automation approaches for Fujitsu Enterprise Postgres environments.
 
 **Important Note:** Use these at your own discretion. You are responsible for validating that any modifications, parameters, or procedures derived from these examples meet your operational, security, and compliance requirements. No warranty is provided, either expressed or implied, for the correctness, completeness, or suitability of these scripts for production use.
 
-**1	Overview**
+## **1	Overview**
 
 pg_switchover.sh automates a planned role swap (switchover) between PRIMARY and STANDBY in a Fujitsu Enterprise Postgres (FEP) streaming replication setup. It ensures that the transition happens safely, consistently, and with optional Mirroring Controller (MC) refresh.
 
-**1.1	Functions and Flow**
+### **1.1	Functions and Flow**
 
 1.	Verify SSH reachability and PostgreSQL role correctness.
 2.	Wait for standby to catch up (WAL replay).
@@ -22,15 +22,15 @@ pg_switchover.sh automates a planned role swap (switchover) between PRIMARY and 
 8.	Start it and verify replication is re-established.
 9.	Post tasks: CHECKPOINT, apply synchronous_standby_names, and refresh MC services.
 
-**2	Pre‑Requisites**
+## **2	Pre‑Requisites**
 
 The items below must be configured correctly to prevent failures during script execution.
 
-**2.1	OS Passwordless SSH (MANDATORY)**
+### **2.1	OS Passwordless SSH (MANDATORY)**
 
 The script executes remote commands via SSH — no passwords should be prompted. 
 
-**2.2	PostgreSQL Environment**
+### **2.2	PostgreSQL Environment**
 
 •	Ensure following binaries exist and are accessible on both nodes:pg_ctl, pg_rewind, psql
 
@@ -38,22 +38,22 @@ The script executes remote commands via SSH — no passwords should be prompted.
 
 •	For systemd‑managed instances, fsepuser must have passwordless sudo for: sudo systemctl start|stop fep@...
 
-**2.3	Mirroring Controller (Optional)**
+### **2.3	Mirroring Controller (Optional)**
 
 If using MC, ensure MC_CTL path is valid. Script will stop/start MC with --mc-only after role switch.
 
-**2.4	Recommended .pgpass Setup**
+### **2.4	Recommended .pgpass Setup**
 
 <pre>10.1.0.20:27500:postgres:fsepuser:<<password>>
 10.1.0.21:27500:postgres:fsepuser:<<password>>
 10.1.0.20:27500:replication:repluser:<<repl_password>>
 10.1.0.21:27500:replication:repluser:<<repl_password>></pre>
 
-**2.5	pg_hba.conf on both nodes**
+### **2.5	pg_hba.conf on both nodes**
 
 Appropriate entries in pg_hba.conf to allow switchover operations.
 
-**3	Configuration — User‑Editable Parameters**
+## **3	Configuration — User‑Editable Parameters**
 
 | Parameter | Example | Description |
 |----------|---------|-------------|
@@ -79,15 +79,15 @@ Appropriate entries in pg_hba.conf to allow switchover operations.
 
 **Note:** Adjust all IPs, ports, PGDATA paths, users, and replication slot names according to your environment.
 
-**4	Execution Modes**
+## **4	Execution Modes**
 
-**4.1	Dry‑Run Mode (no changes made)**
+### **4.1	Dry‑Run Mode (no changes made)**
 
 Validates environment, connectivity, and replication health.
 <pre>./pg_switchover.sh --dry-run</pre>
 Performs: - SSH verification - Role checks (pg_is_in_recovery) - WAL lag validation
 
-**4.2	Execute Mode (actual role swap)**
+### **4.2	Execute Mode (actual role swap)**
 
 Performs full switchover with safety checks.
 <pre>./pg_switchover.sh --execute</pre>
@@ -102,7 +102,7 @@ Performs full switchover with safety checks.
 6.	Start rejoined standby
 7.	Apply synchronous_standby_names, CHECKPOINT, and refresh MC
 
-**5	Post‑Execution Verification**
+## **5	Post‑Execution Verification**
 
 **Run from new primary:**
 <pre>SELECT pg_is_in_recovery();          -- should return 'f'
@@ -113,7 +113,7 @@ SHOW synchronous_standby_names;      -- verify correct sync policy </pre>
 **Verify Mirroring Controller:**
 <pre>/opt/fsepv15server64/bin/mc_ctl status -M /mc </pre>
 
-**6	Common Issues and Fixes**
+## **6	Common Issues and Fixes**
 | Error | Likely Cause | Resolution |
 |-------|--------------|------------|
 | `ssh: connect refused` | SSH not configured properly | Reconfigure passwordless SSH |
@@ -122,7 +122,7 @@ SHOW synchronous_standby_names;      -- verify correct sync policy </pre>
 | `MC not-switchable` | MC state desynchronized | Enable MC refresh in script |
 | `Standby did not leave recovery` | Promotion failed | Check `pg_ctl promote` logs |
 
-**7	Best Practices**
+## **7	Best Practices**
 
 1.	Always run --dry-run before executing a real switchover.
 2.	Ensure replication lag ≤ LAG_WAIT_BYTES before switching.
