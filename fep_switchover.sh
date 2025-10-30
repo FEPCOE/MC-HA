@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-#  pg_switchover.sh — Planned switchover (role swap) for Fujitsu Enterprise Postgres streaming replication.
+#  fep_switchover.sh — Planned switchover (role swap) for Fujitsu Enterprise Postgres streaming replication.
 #  Author: Kothari Nishchay
 #
 #  What this does:
