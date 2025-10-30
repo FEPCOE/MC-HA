@@ -3,7 +3,7 @@
 #  fep_rebuild_sr.sh — Rebuild FEP Sync Streaming Replication with MC orchestration                   #
 #  Author: Kothari Nishchay
 #
-#  PURPOSE (plain English):
+#  PURPOSE:
 #    This script rebuilds a broken replica in a two-node Fujitsu Enterprise Postgres (FEP) cluster
 #    that is managed by the Mirroring Controller (MC). It covers two common situations:
 #      1) The standby died or got corrupted -> rebuild it from the active primary.
@@ -576,3 +576,4 @@ main(){
 }
 
 main "$@"
+
