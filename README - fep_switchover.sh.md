@@ -1,4 +1,4 @@
-README — pg_switchover.sh
+README — fep_switchover.sh
 =========================
 ## **⚠️ Disclaimer⚠️**
 
@@ -8,7 +8,7 @@ This script and README files are provided as examples only. They are intended to
 
 ## **1	Overview**
 
-pg_switchover.sh automates a planned role swap (switchover) between PRIMARY and STANDBY in a Fujitsu Enterprise Postgres (FEP) streaming replication setup. It ensures that the transition happens safely, consistently, and with optional Mirroring Controller (MC) refresh.
+fep_switchover.sh automates a planned role swap (switchover) between PRIMARY and STANDBY in a Fujitsu Enterprise Postgres (FEP) streaming replication setup. It ensures that the transition happens safely, consistently, and with optional Mirroring Controller (MC) refresh.
 
 ### **1.1	Functions and Flow**
 
@@ -84,13 +84,13 @@ Appropriate entries in pg_hba.conf to allow switchover operations.
 ### **4.1	Dry‑Run Mode (no changes made)**
 
 Validates environment, connectivity, and replication health.
-<pre>./pg_switchover.sh --dry-run</pre>
+<pre>./fep_switchover.sh --dry-run</pre>
 Performs: - SSH verification - Role checks (pg_is_in_recovery) - WAL lag validation
 
 ### **4.2	Execute Mode (actual role swap)**
 
 Performs full switchover with safety checks.
-<pre>./pg_switchover.sh --execute</pre>
+<pre>./fep_switchover.sh --execute</pre>
 
 **Sequence of actions:**
 
