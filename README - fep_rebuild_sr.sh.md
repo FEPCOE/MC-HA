@@ -102,7 +102,7 @@ Appropriate entries in pg_hba.conf to allow pg_basebackup and other recovery ope
 | `LOG_DIR` | /home/fsepuser/scripts/log | Script log storage location |
 | `APPNAME` | standby | Application name for this standby |
 
-**Note:** Update local APPNAME="standby" and local appname="standby" inside the script according to your environment if a different application name is used.
+**Note:** Update **local APPNAME="standby"** and **local appname="standby"** inside the script according to your environment if a different application name is used.
 
 Additionally, adjust all IPs, ports, PGDATA paths, users, and replication slot names according to your environment.
 
