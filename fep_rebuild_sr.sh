@@ -77,12 +77,33 @@
 set -euo pipefail
 set -o errtrace
 
-# ---- Centralized error reporter: shows failing line and command so triage is faster.
+## ---- Centralized error reporter: shows failing line and command so triage is faster.
+#err_report() {
+#  local rc=$?
+#  log "ERROR: Command failed (rc=${rc}) at line ${BASH_LINENO[0]}: ${BASH_COMMAND}"
+#  log "See log file: $LOG_FILE"
+#}
+
 err_report() {
   local rc=$?
-  log "ERROR: Command failed (rc=${rc}) at line ${BASH_LINENO[0]}: ${BASH_COMMAND}"
-  log "See log file: $LOG_FILE"
+  local cmd="$BASH_COMMAND"
+  local line="${BASH_LINENO[0]}"
+ 
+  # Disable the trap inside itself + stop -e so we don't recurse
+  trap - ERR
+  set +e
+ 
+  {
+    echo "[$(date +'%F %T')] ERROR: Command failed (rc=${rc}) at line ${line}: ${cmd}"
+    echo "[$(date +'%F %T')] See log file: $LOG_FILE"
+  } >> "$LOG_FILE"
+ 
+  echo "ERROR: Command failed (rc=${rc}) at line ${line}: ${cmd}"
+  echo "See log file: $LOG_FILE"
+ 
+  exit "$rc"
 }
+
 trap err_report ERR
 
 IFS=$'\n\t'
@@ -96,26 +117,26 @@ STANDBY_IP="10.1.0.20" # Adjust accodring to your environment
 
 # Postgres paths (FEP install)
 export PGDATA="/database/inst1" # FEP Data directory path. Adjust accodring to your environment
-export PGBIN="/opt/fsepv15server64/bin"
+export PGBIN="/opt/fsepv15server64/bin" # Adjust accodring to your environment
 export PATH="$PGBIN:$PATH" 
 
 # MC management directory for THIS instance on THIS server
 MCDIR="/mc"   # Make sure this matches your MC deployment directory on the node. Adjust accodring to your environment
 
 # pgBackRest settings (optional but recommended for speed and consistency)
-PGBR_BIN="/opt/fsepv15client64/OSS/pgbackrest/bin/pgbackrest"  # set absolute path if not in $PATH environment variable
-PGBR_STANZA="fep15"  # Adjust accodring to your environment
+PGBR_BIN="/opt/fsepv15client64/OSS/pgbackrest/bin/pgbackrest"  # set absolute path if not in $PATH environment variable. Adjust accodring to your environment. Script will ingnore if pgBackRest is not configured.
+PGBR_STANZA="fep15"  # Adjust accodring to your environment. Script will ingnore if pgBackRest is not configured.
 
 # PostgreSQL connectivity for checks/admin operations
 PGPORT="27500" # Adjust accodring to your environment
 PGUSER="fsepuser"   # Superuser able to run health checks and pg_rewind source connects. Adjust accodring to your environment
-RPLUSER="repluser" # replication user referenced in primary_conninfo. Adjust accodring to your environment
+RPLUSER="repluser" # Replication user referenced in primary_conninfo. Adjust accodring to your environment
 
 # Fixed slot name (optional). If empty, we try to reuse/auto-detect; else script will create/ensure this one.
 SLOT_NAME="repl_slot1" # Adjust accodring to your environment
 
-# Logging — we always tee important messages so the operator can see progress in real-time.
-LOG_DIR="/home/fsepuser/scripts/log"
+# Logging — we always tee important messages so the operator can see progress in real-time. This is for script logging not FEP logging.
+LOG_DIR="/home/fsepuser/scripts/log" # Adjust accodring to your environment
 mkdir -p "$LOG_DIR"
 LOG_FILE="${LOG_DIR}/fep_rebuild_sr_$(date +%Y%m%d_%H%M%S).log"
 
@@ -282,7 +303,7 @@ set_auto_conf(){
 
 # Add primary_conninfo with the right user and app name (we don't trust default -R output fully).
 ensure_primary_conninfo(){
-  local appname="standby"
+  local appname="standby" #Adjust accodring to your environment
   local conn=" 'host=${ACTIVE_PRIMARY} port=${PGPORT} user=${RPLUSER} application_name=${appname}' "
   log "Setting primary_conninfo (application_name='${appname}')"
   set_auto_conf "primary_conninfo" "$conn"
@@ -298,10 +319,16 @@ ensure_primary_slot_name(){
 
 # Make sure the standby can fetch historical WAL from your pgBackRest repo during catch-up.
 ensure_restore_command(){
-  # Using archive-get is robust when network glitches drop streaming; the standby will pull missing WAL.
-  local cmd="'${PGBR_BIN} --stanza=${PGBR_STANZA} archive-get %f %p'"
-  log "Setting restore_command=${cmd}"
-  set_auto_conf "restore_command" "$cmd"
+  # Only set restore_command if pgBackRest binary is available and stanza configured.
+  if [[ -n "${PGBR_BIN:-}" ]] && command -v "$PGBR_BIN" >/dev/null 2>&1; then
+    local cmd="'${PGBR_BIN} --stanza=${PGBR_STANZA} archive-get %f %p'"
+    log "Setting restore_command=${cmd}"
+    set_auto_conf "restore_command" "$cmd"
+  else
+    log "NOTE: pgBackRest not available; NOT setting restore_command."
+    # Optional: remove any stale restore_command that might reference pgBackRest
+    sed -i "/^[[:space:]]*restore_command[[:space:]]*=/d" "$PGDATA/postgresql.auto.conf" 2>/dev/null || true
+  fi
 }
 
 # Reuse a slot name if already present locally; otherwise try to discover an existing one on primary.
@@ -464,7 +491,7 @@ scenario_rebuild_standby(){
   detect_active_primary   # usually resolves to PRIMARY_IP in a steady state
 
   local SLOT="$(resolve_slot_name)"
-  local APPNAME="standby"
+  local APPNAME="standby" #Adjust accodring to your environment
   log "Using replication slot: ${SLOT} ; application_name: ${APPNAME}"
 
   ensure_mc_stopped 60
@@ -502,7 +529,7 @@ scenario_rebuild_old_primary(){
   detect_active_primary
 
   local SLOT="$(resolve_slot_name)"
-  local APPNAME="standby"
+  local APPNAME="standby" #Adjust accodring to your environment
   log "Using replication slot: ${SLOT} ; application_name: ${APPNAME}"
 
   ensure_mc_stopped 60
