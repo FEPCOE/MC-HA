@@ -54,6 +54,12 @@ The script uses **pgBackRest**, **pg_basebackup**, or **pg_rewind** depending on
 
 6.	Restarts MC with the correct failover mode and provides post‑start health checks.
 
+**Note on restore_command Handling:**
+
+If **pgBackRest** is configured and active in the environment, the script automatically sets the restore_command parameter to use the pgBackRest restore command.
+
+If **pgBackRest** is **not configured or not in use**, the script will skip setting the restore_command and remove it automatically if it already exists in postgresql.auto.conf to prevent startup errors.
+
 ## **2	Authentication Requirements**
 
 ### **2.1	pgBackRest (DB → Repo host)**
@@ -65,10 +71,15 @@ No SSH is needed between **10.1.0.20** and **10.1.0.21** for this script.
 
 All DB‑to‑DB actions use .pgpass for passwordless authentication. Example entries on both nodes (chmod 600 ~/.pgpass):
 
-<pre>10.1.0.20:27500:postgres:fsepuser:<<password>>
-10.1.0.21:27500:postgres:fsepuser:<<password>>
-10.1.0.20:27500:replication:repluser:<<repl_password>>
-10.1.0.21:27500:replication:repluser:<<repl_password>></pre>
+<pre>
+10.1.0.20:27500:postgres:fsepuser:&lt;&lt;password&gt;&gt;
+10.1.0.21:27500:postgres:fsepuser:&lt;&lt;password&gt;&gt;
+10.1.0.20:27500:replication:repluser:&lt;&lt;repl_password&gt;&gt;
+10.1.0.21:27500:replication:repluser:&lt;&lt;repl_password&gt;&gt;
+</pre>
+
+
+
 
 ### **2.3	pg_hba.conf (on active primary)**
 
@@ -88,11 +99,17 @@ Appropriate entries in pg_hba.conf to allow pg_basebackup and other recovery ope
 | `PGUSER` | fsepuser | Admin user for pg_rewind, psql checks |
 | `RPLUSER` | repluser | Replication user for streaming |
 | `SLOT_NAME` | repl_slot1 | Physical replication slot name |
-| `LOG_DIR` | /home/fsepuser/scripts/log | Log storage location |
+| `LOG_DIR` | /home/fsepuser/scripts/log | Script log storage location |
+| `APPNAME` | standby | Application name for this standby |
 
-**Note:** Adjust all IPs, ports, PGDATA paths, users, and replication slot names according to your environment.
+**Note:** Update local APPNAME="standby" and local appname="standby" inside the script according to your environment if a different application name is used.
+
+Additionally, adjust all IPs, ports, PGDATA paths, users, and replication slot names according to your environment.
 
 ## **4	Execution Workflow**
+### ⚠️Execution Requirement⚠️
+This script must be executed from the current standby server only.
+Running it from the primary node can lead to incorrect role detection and potential data inconsistency.
 
 ### **4.1	To Rebuild Standby**
 
@@ -135,7 +152,7 @@ d.	Restart MC and validate recovery.
 SELECT status, receive_start_lsn, latest_end_lsn FROM pg_stat_wal_receiver;</pre>
 
 **Also confirm via:**
-<pre>mc_ctl status -M /mc </pre>
+<pre>/opt/fsepv15server64/bin/mc_ctl status -M &lt;MCDIR&gt; #Replace "MCDIR" with your actual Mirroring Controller path</pre>
 
 ## **6	Common Issues & Fixes**
 | Error | Likely Cause | Fix |
