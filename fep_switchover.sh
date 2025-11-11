@@ -113,6 +113,7 @@ ALLOW_SSH_PASSWORD=0
 # Mirroring Controller (MC) tool and post-switch behavior
 MC_CTL="/opt/fsepv15server64/bin/mc_ctl" # Adjust accodring to your environment
 MC_REFRESH_AFTER_SWITCH="true"   # if "true", stop/start MC with --mc-only on both nodes
+MC_DIR= "/mc" # Mirroring Controller directory. Adjust accodring to your environment.
 
 # synchronous_standby_names policy to apply on NEW PRIMARY after switchover
 # e.g., "1 (standby)" means NEW PRIMARY will wait for ACK from application_name 'standby'
@@ -496,15 +497,15 @@ mc_refresh_after_switch() {
   log "Refreshing Mirroring Controller on BOTH nodes (--mc-only)"
 
   # Ensure MC spawns postgres with known PATH; also strip LD_LIBRARY_PATH to avoid surprises.
-  local ENV_WRAP="env -u LD_LIBRARY_PATH PATH=/opt/fsepv15server64/bin:/usr/sbin:/usr/bin"
+  local ENV_WRAP="env -u LD_LIBRARY_PATH PATH=/opt/fsepv15server64/bin:/usr/sbin:/usr/bin" # Adjust according to your FEP environment
 
   # Bounded stops (ignore failures if MC is already stopped)
-  run_ssh "$PRIMARY_SSH_HOST" "$PRIMARY_SSH_USER" "$ENV_WRAP timeout 20s '$MC_CTL' stop  -M /mc --mc-only >/dev/null 2>&1 || true"
-  run_ssh "$STANDBY_SSH_HOST"  "$STANDBY_SSH_USER"  "$ENV_WRAP timeout 20s '$MC_CTL' stop  -M /mc --mc-only >/dev/null 2>&1 || true"
+  run_ssh "$PRIMARY_SSH_HOST" "$PRIMARY_SSH_USER" "$ENV_WRAP timeout 20s '$MC_CTL' stop  -M $MC_DIR --mc-only >/dev/null 2>&1 || true"
+  run_ssh "$STANDBY_SSH_HOST"  "$STANDBY_SSH_USER"  "$ENV_WRAP timeout 20s '$MC_CTL' stop -M $MC_DIR --mc-only >/dev/null 2>&1 || true"
 
   # Bounded starts
-  run_ssh "$PRIMARY_SSH_HOST" "$PRIMARY_SSH_USER"   "$ENV_WRAP timeout 30s '$MC_CTL' start -M /mc --mc-only >/dev/null 2>&1 || true"
-  run_ssh "$STANDBY_SSH_HOST"  "$STANDBY_SSH_USER"  "$ENV_WRAP timeout 30s '$MC_CTL' start -M /mc --mc-only >/dev/null 2>&1 || true"
+  run_ssh "$PRIMARY_SSH_HOST" "$PRIMARY_SSH_USER"   "$ENV_WRAP timeout 30s '$MC_CTL' start -M $MC_DIR --mc-only >/dev/null 2>&1 || true"
+  run_ssh "$STANDBY_SSH_HOST"  "$STANDBY_SSH_USER"  "$ENV_WRAP timeout 30s '$MC_CTL' start -M $MC_DIR --mc-only >/dev/null 2>&1 || true"
 
   log "MC refresh completed on both nodes."
 }
