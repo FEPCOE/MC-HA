@@ -72,6 +72,7 @@ Appropriate entries in pg_hba.conf to allow switchover operations.
 | `PG_CTL` | /opt/fsepv15server64/bin/pg_ctl | Path to PostgreSQL control binary |
 | `PG_REWIND` | /opt/fsepv15server64/bin/pg_rewind | Path to pg_rewind binary |
 | `MC_CTL` | /opt/fsepv15server64/bin/mc_ctl | Path to Mirroring Controller tool |
+| `MC_DIR` | /mc | Path to Mirroring Controller files |
 | `SYNC_STANDBY_NAMES_VALUE` | standby | Sync policy for new primary |
 | `LAG_WAIT_BYTES` | 0 | Max replication lag allowed |
 | `LAG_WAIT_TIMEOUT` | 120 | Max seconds to wait for catch-up |
@@ -80,6 +81,10 @@ Appropriate entries in pg_hba.conf to allow switchover operations.
 **Note:** Adjust all IPs, ports, PGDATA paths, users, and replication slot names according to your environment.
 
 ## **4	Execution Modes**
+
+### **⚠️Execution Requirement⚠️ **
+This script must be executed from the current standby server only.
+Running it from the primary node can lead to incorrect role detection and potential data inconsistency.
 
 ### **4.1	Dry‑Run Mode (no changes made)**
 
@@ -111,7 +116,7 @@ SHOW synchronous_standby_names;      -- verify correct sync policy </pre>
 **Run from new standby:**
 <pre>SELECT pg_is_in_recovery();          -- should return 't' </pre>
 **Verify Mirroring Controller:**
-<pre>/opt/fsepv15server64/bin/mc_ctl status -M /mc </pre>
+<pre>/opt/fsepv15server64/bin/mc_ctl status -M &lt;MC_DIR&gt; #Replace <MC_DIR> with your actual Mirroring Controller path</pre>
 
 ## **6	Common Issues and Fixes**
 | Error | Likely Cause | Resolution |
