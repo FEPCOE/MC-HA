@@ -44,10 +44,16 @@ If using MC, ensure MC_CTL path is valid. Script will stop/start MC with --mc-on
 
 ### **2.4	Recommended .pgpass Setup**
 
-<pre>10.1.0.20:27500:postgres:fsepuser:<<password>>
-10.1.0.21:27500:postgres:fsepuser:<<password>>
-10.1.0.20:27500:replication:repluser:<<repl_password>>
-10.1.0.21:27500:replication:repluser:<<repl_password>></pre>
+<pre><code>
+10.1.0.20:27500:postgres:fsepuser:&lt;&lt;password&gt;&gt;
+10.1.0.21:27500:postgres:fsepuser:&lt;&lt;password&gt;&gt;
+10.1.0.20:27500:replication:repluser:&lt;&lt;repl_password&gt;&gt;
+10.1.0.21:27500:replication:repluser:&lt;&lt;repl_password&gt;&gt;
+</code></pre>
+
+
+
+
 
 ### **2.5	pg_hba.conf on both nodes**
 
