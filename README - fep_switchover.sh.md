@@ -51,10 +51,6 @@ If using MC, ensure MC_CTL path is valid. Script will stop/start MC with --mc-on
 10.1.0.21:27500:replication:repluser:&lt;&lt;repl_password&gt;&gt;
 </code></pre>
 
-
-
-
-
 ### **2.5	pg_hba.conf on both nodes**
 
 Appropriate entries in pg_hba.conf to allow switchover operations.
@@ -124,7 +120,7 @@ SHOW synchronous_standby_names;      -- verify correct sync policy </pre>
 <pre>SELECT pg_is_in_recovery();          -- should return 't' </pre>
 **Verify Mirroring Controller:**
 <pre><code>
-/opt/fsepv&lt;&lt;xx&gt;&gt;server64/bin/mc_ctl status -M &lt;MC_DIR&gt; #Replace <MC_DIR> with your actual Mirroring Controller path. Also &lt;&lt;xx&gt;&gt; represent your actul FEP version. 
+/opt/fsepv&lt;&lt;xx&gt;&gt;server64/bin/mc_ctl status -M &lt;&lt;MC_DIR&gt;&gt; #Replace &lt;&lt;MC_DIR&gt;&gt; with your actual Mirroring Controller path. Also &lt;&lt;xx&gt;&gt; represent your actul FEP version. 
 
 Please ensure you will get "switchable" as mirroring status.
 
