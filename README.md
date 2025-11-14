@@ -8,10 +8,7 @@ When the database servers are hosted in the cloud (AWS or MS Azure), these sampl
 Sample fencing scripts are located at:
 <pre><code>
 /installDir/fsepv&lt;&lt;xx&gt;&gt;assistant/share/mcarb_execute_fencing.sh.sample            # For on-prem using IPMI tool
-
 /installDir/fsepv&lt;&lt;xx&gt;&gt;assistant/share/mcarb_execute_fencing.sh.aws.sample        # For AWS cloud
-
 /installDir/fsepv&lt;&lt;xx&gt;&gt;assistant/share/mcarb_execute_fencing.sh.az.sample         # For MS Azure cloud
- 
-  Where xx represents your actual FEP version. For example, FEP 16, then path will be "/installDir/fsepv16assistant/"
 </code></pre>
+Where &lt;&lt;xx&gt;&gt; represents your actual FEP version. For example, FEP 16 path will be "/installDir/fsepv16assistant/"
