@@ -107,7 +107,7 @@ Performs full switchover with safety checks.
 **Sequence of actions:**
 
 1.	Promote standby (NEW PRIMARY)
-2.	Stop old primary (fence)
+2.	Stop old primary
 3.	Create replication slot on new primary (optional)
 4.	Run pg_rewind on old primary
 5.	Configure old primary as standby
@@ -123,7 +123,20 @@ SHOW synchronous_standby_names;      -- verify correct sync policy </pre>
 **Run from new standby:**
 <pre>SELECT pg_is_in_recovery();          -- should return 't' </pre>
 **Verify Mirroring Controller:**
-<pre>/opt/fsepv15server64/bin/mc_ctl status -M &lt;MC_DIR&gt; #Replace <MC_DIR> with your actual Mirroring Controller path</pre>
+<pre>/opt/fsepv&lt;&lt;xx&gt;&gt;server64/bin/mc_ctl status -M &lt;MC_DIR&gt; #Replace <MC_DIR> with your actual Mirroring Controller path. Also &lt;&lt;xx&gt;&gt; represent your actul FEP version. 
+
+Please ensure you will get "switchable" as mirroring status.
+
+For Example, /opt/fsepv15server64/bin/mc_ctl status -M /mc
+mirroring status
+-----------------
+switchable
+ 
+server_id  host_role  host       host_status  db_proc_status  disk_status
+-------------------------------------------------------------------------
+server1    primary    10.1.0.20  normal       normal          normal
+server2    standby    10.1.0.21  normal       normal          normal
+</pre>
 
 ## **6	Common Issues and Fixes**
 | Error | Likely Cause | Resolution |
@@ -136,10 +149,8 @@ SHOW synchronous_standby_names;      -- verify correct sync policy </pre>
 
 ## **7	Best Practices**
 
-1.	Always run --dry-run before executing a real switchover.
-2.	Ensure replication lag ≤ LAG_WAIT_BYTES before switching.
-3.	Avoid running during heavy I/O or long transactions.
-4.	Validate pg_rewind prerequisites (WAL hints or checksums enabled).
-
-
-
+1.  Ensure mirroring status must be "switchable" before executing script.
+2.	Always run --dry-run before executing a real switchover.
+3.	Ensure replication lag ≤ LAG_WAIT_BYTES before switching.
+4.	Avoid running during heavy I/O or long transactions.
+5.	Validate pg_rewind prerequisites (WAL hints or checksums enabled).
