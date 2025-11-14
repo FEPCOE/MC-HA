@@ -89,7 +89,7 @@ Appropriate entries in pg_hba.conf to allow switchover operations.
 
 ## **4	Execution Modes**
 
-### **⚠️Execution Requirement⚠️ **
+### ⚠️Execution Requirement⚠️
 This script must be executed from the current standby server only.
 Running it from the primary node can lead to incorrect role detection and potential data inconsistency.
 
