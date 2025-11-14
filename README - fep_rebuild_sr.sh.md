@@ -78,9 +78,6 @@ All DB‑to‑DB actions use .pgpass for passwordless authentication. Example en
 10.1.0.21:27500:replication:repluser:&lt;&lt;repl_password&gt;&gt;
 </pre>
 
-
-
-
 ### **2.3	pg_hba.conf (on active primary)**
 
 Appropriate entries in pg_hba.conf to allow pg_basebackup and other recovery operations.
@@ -120,13 +117,13 @@ Running it from the primary node can lead to incorrect role detection and potent
 
 3.	The script will:
 
-a.	Detect current primary.
+     a.	Detect current primary.
 
-b.	Stop MC/PG on standby.
+     b.	Stop MC/PG on standby.
 
-c.	Restore data using pgBackRest (or pg_basebackup fallback).
+     c.	Restore data using pgBackRest (or pg_basebackup fallback).
 
-d.	Reconfigure recovery and start MC.
+     d.	Reconfigure recovery and start MC.
 
 ### **4.2	To Rebuild Old Primary after Failover**
 
@@ -137,13 +134,13 @@ d.	Reconfigure recovery and start MC.
 
 3.	The script will:
 
-a.	Detect new active primary.
+     a.	Detect new active primary.
 
-b.	Stop MC/PG locally.
+     b.	Stop MC/PG locally.
 
-c.	Attempt pg_rewind first, else fall back to pgBackRest or pg_basebackup.
+     c.	Attempt pg_rewind first, else fall back to pgBackRest or pg_basebackup.
 
-d.	Restart MC and validate recovery.
+     d.	Restart MC and validate recovery.
 
 ## **5	Post‑Execution Checks**
 
