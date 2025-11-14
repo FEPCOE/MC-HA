@@ -149,7 +149,21 @@ Running it from the primary node can lead to incorrect role detection and potent
 SELECT status, receive_start_lsn, latest_end_lsn FROM pg_stat_wal_receiver;</pre>
 
 **Also confirm via:**
-<pre>/opt/fsepv15server64/bin/mc_ctl status -M &lt;MCDIR&gt; #Replace "MCDIR" with your actual Mirroring Controller path</pre>
+<pre><code>
+/opt/fsepv&lt;&lt;xx&gt;&gt;server64/bin/mc_ctl status -M &lt;&lt;MC_DIR&gt;&gt; #Replace &lt;&lt;MC_DIR&gt;&gt; with your actual Mirroring Controller path. Also &lt;&lt;xx&gt;&gt; represent your actul FEP version. 
+
+Please ensure you will get "switchable" as mirroring status.
+
+For Example, /opt/fsepv15server64/bin/mc_ctl status -M /mc
+mirroring status
+-----------------
+switchable
+ 
+server_id  host_role  host       host_status  db_proc_status  disk_status
+-------------------------------------------------------------------------
+server1    primary    10.1.0.20  normal       normal          normal
+server2    standby    10.1.0.21  normal       normal          normal
+</code></pre>
 
 ## **6	Common Issues & Fixes**
 | Error | Likely Cause | Fix |
