@@ -83,8 +83,9 @@ Appropriate entries in pg_hba.conf to allow switchover operations.
 | `LAG_WAIT_BYTES` | 0 | Max replication lag allowed |
 | `LAG_WAIT_TIMEOUT` | 120 | Max seconds to wait for catch-up |
 | `CHECKPOINT_AFTER_PROMOTION` | true | Run CHECKPOINT after role switch |
+| `LD_LIBRARY_PATH` | /opt/fsepv15server64/bin:/usr/sbin:/usr/bin | Environment wrapper to ensure correct binary path. Update this path according to your installed FEP version. • FEP 14 → /opt/fsepv14server64/bin • FEP 15 → /opt/fsepv15server64/bin • FEP 16 → /opt/fsepv16server64/bin |
 
-**Note:** Adjust all IPs, ports, PGDATA paths, users, and replication slot names according to your environment.
+**Note:** Adjust all IPs, ports, PGDATA paths, users, and replication slot names according to your environment. Additionally, local ENV_WRAP="env -u LD_LIBRARY_PATH PATH=/opt/fsepv<xx>server64/bin:/usr/sbin:/usr/bin" according to your environment.
 
 ## **4	Execution Modes**
 
