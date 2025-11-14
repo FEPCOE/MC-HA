@@ -123,7 +123,8 @@ SHOW synchronous_standby_names;      -- verify correct sync policy </pre>
 **Run from new standby:**
 <pre>SELECT pg_is_in_recovery();          -- should return 't' </pre>
 **Verify Mirroring Controller:**
-<pre>/opt/fsepv&lt;&lt;xx&gt;&gt;server64/bin/mc_ctl status -M &lt;MC_DIR&gt; #Replace <MC_DIR> with your actual Mirroring Controller path. Also &lt;&lt;xx&gt;&gt; represent your actul FEP version. 
+<pre><code>
+/opt/fsepv&lt;&lt;xx&gt;&gt;server64/bin/mc_ctl status -M &lt;MC_DIR&gt; #Replace <MC_DIR> with your actual Mirroring Controller path. Also &lt;&lt;xx&gt;&gt; represent your actul FEP version. 
 
 Please ensure you will get "switchable" as mirroring status.
 
@@ -136,7 +137,7 @@ server_id  host_role  host       host_status  db_proc_status  disk_status
 -------------------------------------------------------------------------
 server1    primary    10.1.0.20  normal       normal          normal
 server2    standby    10.1.0.21  normal       normal          normal
-</pre>
+</code></pre>
 
 ## **6	Common Issues and Fixes**
 | Error | Likely Cause | Resolution |
