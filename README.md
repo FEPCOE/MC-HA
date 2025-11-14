@@ -6,9 +6,12 @@ These sample scripts power off the primary server using IPMI tool, in case of ph
 When the database servers are hosted in the cloud (AWS or MS Azure), these sample scripts shutdown the VM using cloud CLI.
 
 Sample fencing scripts are located at:
+<pre><code>
+/installDir/fsepv&lt;&lt;xx&gt;&gt;assistant/share/mcarb_execute_fencing.sh.sample            # For on-prem using IPMI tool
 
-/installDir/fsepv<x>assistant/share/mcarb_execute_fencing.sh.sample            # For on-prem using IPMI tool
+/installDir/fsepv&lt;&lt;xx&gt;&gt;assistant/share/mcarb_execute_fencing.sh.aws.sample        # For AWS cloud
 
-/installDir/fsepv<x>assistant/share/mcarb_execute_fencing.sh.aws.sample        # For AWS cloud
-
-/installDir/fsepv<x>assistant/share/mcarb_execute_fencing.sh.az.sample         # For MS Azure cloud
+/installDir/fsepv&lt;&lt;xx&gt;&gt;assistant/share/mcarb_execute_fencing.sh.az.sample         # For MS Azure cloud
+ 
+  Where xx represents your actual FEP version. For example, FEP 16, then path will be "/installDir/fsepv16assistant/"
+</code></pre>
